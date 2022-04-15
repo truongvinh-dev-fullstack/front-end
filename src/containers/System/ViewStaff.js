@@ -290,6 +290,12 @@ class ViewStaff extends Component {
     this.getCurrentIdeaPage(currentPage);
   };
 
+  handleDownloadFile = async (filename) => {
+    await downloadFile(filename).then((res) => {
+      FileDownload(res, filename);
+    });
+  };
+
   render() {
     let userInfo = this.props.userInfo;
     let {

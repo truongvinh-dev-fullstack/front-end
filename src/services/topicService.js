@@ -28,7 +28,7 @@ const getStatusIsLike = (userId, ideaId) => {
   return axios.get(`/api/status-islike?userId=${userId}&ideaId=${ideaId}`);
 };
 
-const getStarusByUserIdAndTopic = (userId, topicId) => {
+const getStatusByUserIdAndTopic = (userId, topicId) => {
   return axios.get(
     `/api/getAllStatusByUserAndTopic?userId=${userId}&topicId=${topicId}`
   );
@@ -74,7 +74,7 @@ export {
   getAllIdeasByTopic,
   handleLikeorDisLike,
   getStatusIsLike,
-  getStarusByUserIdAndTopic,
+  getStatusByUserIdAndTopic,
   getAllLikeByTopic,
   getAllDisLikeByTopic,
   handlePostComment,

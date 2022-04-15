@@ -90,6 +90,14 @@ class ModalTopic extends Component {
       this.props.createNewTopic(this.state);
       console.log("Done");
     }
+    this.setState({
+      id: "",
+      name: "",
+      description: "",
+      startdate: "",
+      firstdate: "",
+      finaldate: "",
+    });
   };
 
   handleEditTopic = () => {

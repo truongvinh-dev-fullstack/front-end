@@ -95,7 +95,7 @@ class ModalIdea extends Component {
   };
 
   render() {
-    console.log("Check state model: ", this.state);
+    // console.log("Check state model: ", this.state);
     return (
       <div>
         <Modal

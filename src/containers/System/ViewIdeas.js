@@ -8,7 +8,7 @@ import {
   getAllIdeasByTopic,
   handleLikeorDisLike,
   getStatusIsLike,
-  getStarusByUserIdAndTopic,
+  getStatusByUserIdAndTopic,
   getAllLikeByTopic,
   getAllDisLikeByTopic,
   getAllCommentByIdea,
@@ -49,7 +49,9 @@ class ViewIdeas extends Component {
         arrTopics: this.props.topics,
         topicId: this.props.topics[0].id,
       });
-      this.getAllIdeasByTopic(this.props.topics[0].id);
+    }
+    if (prevState.arrTopics !== this.state.arrTopics) {
+      this.getAllIdeasByTopic(this.state.arrTopics[0].id);
     }
     if (prevProps.userInfo !== this.props.userInfo) {
       this.setState({
@@ -61,7 +63,7 @@ class ViewIdeas extends Component {
       let userId = this.props.userInfo.id;
       let topicId = this.state.topicId;
 
-      let data = await getStarusByUserIdAndTopic(userId, topicId);
+      let data = await getStatusByUserIdAndTopic(userId, topicId);
       this.setState({
         arrStatusByUser: data.data,
       });
@@ -94,7 +96,7 @@ class ViewIdeas extends Component {
       });
 
       let userId = this.props.userInfo.id;
-      let data = await getStarusByUserIdAndTopic(userId, id);
+      let data = await getStatusByUserIdAndTopic(userId, id);
       this.setState({
         arrStatusByUser: data.data,
       });

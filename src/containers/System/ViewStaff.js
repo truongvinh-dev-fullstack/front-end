@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import "./ViewIdeas.scss";
+import FileDownload from "js-file-download";
+import moment from "moment";
 import * as actions from "../../store/actions";
 import {
   getAllIdeasByTopic,
   handleLikeorDisLike,
   getStatusIsLike,
-  getStarusByUserIdAndTopic,
+  getStatusByUserIdAndTopic,
   getAllLikeByTopic,
   getAllDisLikeByTopic,
   getAllCommentByIdea,
@@ -14,9 +16,11 @@ import {
   handleEditComment,
   deleteCommentService,
   createNewIdea,
+  downloadFile,
 } from "../../services/topicService";
 import ModalComment from "./ModalComment";
 import ModalIdea from "./ModalIdea";
+import ReactPaginate from "react-paginate";
 
 class ViewStaff extends Component {
   constructor(prop) {
@@ -24,6 +28,7 @@ class ViewStaff extends Component {
     this.state = {
       arrTopics: [],
       arrIdeas: [],
+      newIdeas: [],
       userInfo: {},
       arrStatusByUser: [],
       topicName: "",
@@ -42,7 +47,6 @@ class ViewStaff extends Component {
 
   componentDidMount() {
     this.props.getAllTopicRedux();
-    this.getAllIdeasByTopic("topic 1");
   }
 
   async componentDidUpdate(prevProps, prevState, snapshot) {
@@ -52,6 +56,12 @@ class ViewStaff extends Component {
 
         topic: this.props.topics[0],
       });
+    }
+    if (prevState.arrTopics !== this.state.arrTopics) {
+      this.getAllIdeasByTopic(this.state.arrTopics[0]);
+    }
+    if (prevState.arrIdeas !== this.state.arrIdeas) {
+      this.getCurrentIdeaPage(1);
     }
     if (prevProps.userInfo !== this.props.userInfo) {
       this.setState({
@@ -64,7 +74,7 @@ class ViewStaff extends Component {
       let topic_name = this.state.topicName;
       let topicId = this.state.topicId;
 
-      let data = await getStarusByUserIdAndTopic(userId, topicId);
+      let data = await getStatusByUserIdAndTopic(userId, topicId);
       this.setState({
         arrStatusByUser: data.data,
       });
@@ -98,7 +108,7 @@ class ViewStaff extends Component {
       });
 
       let userId = this.props.userInfo.id;
-      let data = await getStarusByUserIdAndTopic(userId, topic.id);
+      let data = await getStatusByUserIdAndTopic(userId, topic.id);
       this.setState({
         arrStatusByUser: data.data,
       });
@@ -259,13 +269,34 @@ class ViewStaff extends Component {
     }
   };
 
+  getCurrentIdeaPage = (currentPage) => {
+    let arrIdeas = this.state.arrIdeas;
+    let newIdeas = [];
+    for (let i = currentPage * 5 - 5; i < currentPage * 5; i++) {
+      if (i >= arrIdeas.length) {
+        break;
+      } else {
+        let obj = arrIdeas[i];
+        newIdeas.push(obj);
+      }
+    }
+    this.setState({
+      newIdeas: newIdeas,
+    });
+  };
+
+  handleClickPage = (data) => {
+    let currentPage = data.selected + 1;
+    this.getCurrentIdeaPage(currentPage);
+  };
+
   render() {
     let userInfo = this.props.userInfo;
     let {
       isOpenModalIdea,
       topic,
       arrTopics,
-      arrIdeas,
+      newIdeas,
       arrStatusByUser,
       arrAllLikeByTopic,
     } = this.state;
@@ -303,9 +334,9 @@ class ViewStaff extends Component {
               createNewIdea={this.createNewIdea}
             />
           </div>
-          {arrIdeas &&
-            arrIdeas.length > 0 &&
-            arrIdeas.map((item, index) => {
+          {newIdeas &&
+            newIdeas.length > 0 &&
+            newIdeas.map((item, index) => {
               let status = 3;
               arrStatusByUser.map((item2, index2) => {
                 if (item2.ideaId == item.id) {
@@ -320,6 +351,18 @@ class ViewStaff extends Component {
                 <div className="ideas">
                   <div className="idea-title">{item.idea_name}</div>
                   <div className="idea-description">{item.description}</div>
+                  <div>
+                    Post day: {moment(item.createdAt).format("YYYY-MM-DD")}
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => {
+                        this.handleDownloadFile(item.file_name);
+                      }}
+                    >
+                      Download
+                    </button>
+                  </div>
                   <div className="like-dislike">
                     <div className="like">
                       <i
@@ -354,6 +397,7 @@ class ViewStaff extends Component {
                       <span>{currentDisLike}</span>
                     </div>
                   </div>
+
                   <div className="comment-container">
                     <button
                       onClick={() => this.handleOpenModelComment(item.id)}
@@ -376,6 +420,24 @@ class ViewStaff extends Component {
                 </div>
               );
             })}
+          <ReactPaginate
+            previousLabel="Previous"
+            nextLabel="Next"
+            breakLabel="..."
+            pageCount={20}
+            marginPagesDisplayed={3}
+            onPageChange={this.handleClickPage}
+            containerClassName="pagination justify-content-center"
+            pageClassName="page-item"
+            previousClassName="page-item"
+            nextClassName="page-item"
+            pageLinkClassName="page-link"
+            previousLinkClassName="page-link"
+            nextLinkClassName="page-link"
+            breakClassName="page-item"
+            breakLinkClassName="page-link"
+            activeClassName="active"
+          />
         </div>
       </div>
     );

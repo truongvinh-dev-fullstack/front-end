@@ -13,6 +13,7 @@ import {
 } from "../../../services/topicService";
 import ModalTopic from "./ModalTopic";
 import _ from "lodash";
+import ReactPaginate from "react-paginate";
 
 class ManageTopics extends Component {
   constructor(props) {
@@ -20,6 +21,7 @@ class ManageTopics extends Component {
     this.state = {
       datetime: "",
       arrTopics: [],
+      newTopics: [],
       isOpenModalTopic: false,
       isOpenModalEditTopic: false,
       editTopic: {},
@@ -28,6 +30,7 @@ class ManageTopics extends Component {
 
   async componentDidMount() {
     this.props.getAllTopicRedux();
+    this.getCurrentTopicPage(1);
   }
 
   handleCreateNewTopic = () => {
@@ -57,6 +60,7 @@ class ManageTopics extends Component {
   createNewTopic = async (data) => {
     try {
       let response = await createNewTopic(data);
+      console.log(response);
       if (response && response.errCode !== 0) {
         alert(response.message);
       } else {
@@ -90,6 +94,7 @@ class ManageTopics extends Component {
   DoEditTopic = async (data) => {
     try {
       let response = await editTopicService(data);
+      console.log(response);
       if (response && response.errCode !== 0) {
         alert(response.message);
       } else {
@@ -109,10 +114,34 @@ class ManageTopics extends Component {
         arrTopics: this.props.topics,
       });
     }
+    if (prevState.arrTopics !== this.state.arrTopics) {
+      this.getCurrentTopicPage(1);
+    }
   }
 
-  render() {
+  getCurrentTopicPage = (currentPage) => {
     let arrTopics = this.state.arrTopics;
+    let newTopics = [];
+    for (let i = currentPage * 5 - 5; i < currentPage * 5; i++) {
+      if (i >= arrTopics.length) {
+        break;
+      } else {
+        let obj = arrTopics[i];
+        newTopics.push(obj);
+      }
+    }
+    this.setState({
+      newTopics: newTopics,
+    });
+  };
+
+  handleClickPage = (data) => {
+    let currentPage = data.selected + 1;
+    this.getCurrentTopicPage(currentPage);
+  };
+
+  render() {
+    let arrTopics = this.state.newTopics;
     console.log("check datetime: ", this.state.datetime);
 
     return (
@@ -193,6 +222,24 @@ class ManageTopics extends Component {
                 })}
             </tbody>
           </table>
+          <ReactPaginate
+            previousLabel="Previous"
+            nextLabel="Next"
+            breakLabel="..."
+            pageCount={20}
+            marginPagesDisplayed={3}
+            onPageChange={this.handleClickPage}
+            containerClassName="pagination justify-content-center"
+            pageClassName="page-item"
+            previousClassName="page-item"
+            nextClassName="page-item"
+            pageLinkClassName="page-link"
+            previousLinkClassName="page-link"
+            nextLinkClassName="page-link"
+            breakClassName="page-item"
+            breakLinkClassName="page-link"
+            activeClassName="active"
+          />
         </div>
       </div>
     );

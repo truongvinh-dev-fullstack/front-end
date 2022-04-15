@@ -12,12 +12,14 @@ import {
 } from "../../../services/userService";
 import ModalUser from "./ModalUser";
 import _ from "lodash";
+import ReactPaginate from "react-paginate";
 
 class UserManage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       arrUser: [],
+      newUsers: [],
       isOpenModalUser: false,
       isOpenModalEditUser: false,
       editUser: {},
@@ -26,6 +28,7 @@ class UserManage extends Component {
 
   async componentDidMount() {
     await this.getAllUserFromReact();
+    this.getCurrentUserPage(1);
   }
 
   getAllUserFromReact = async () => {
@@ -112,8 +115,29 @@ class UserManage extends Component {
     }
   };
 
-  render() {
+  getCurrentUserPage = (currentPage) => {
     let arrUser = this.state.arrUser;
+    let newUsers = [];
+    for (let i = currentPage * 5 - 5; i < currentPage * 5; i++) {
+      if (i >= arrUser.length) {
+        break;
+      } else {
+        let obj = arrUser[i];
+        newUsers.push(obj);
+      }
+    }
+    this.setState({
+      newUsers: newUsers,
+    });
+  };
+
+  handleClickPage = (data) => {
+    let currentPage = data.selected + 1;
+    this.getCurrentUserPage(currentPage);
+  };
+
+  render() {
+    let arrUser = this.state.newUsers;
     let { files } = this.state;
     console.log("chek state: ", this.state);
 
@@ -183,6 +207,24 @@ class UserManage extends Component {
                 })}
             </tbody>
           </table>
+          <ReactPaginate
+            previousLabel="Previous"
+            nextLabel="Next"
+            breakLabel="..."
+            pageCount={20}
+            marginPagesDisplayed={3}
+            onPageChange={this.handleClickPage}
+            containerClassName="pagination justify-content-center"
+            pageClassName="page-item"
+            previousClassName="page-item"
+            nextClassName="page-item"
+            pageLinkClassName="page-link"
+            previousLinkClassName="page-link"
+            nextLinkClassName="page-link"
+            breakClassName="page-item"
+            breakLinkClassName="page-link"
+            activeClassName="active"
+          />
         </div>
       </div>
     );

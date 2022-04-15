@@ -47,13 +47,13 @@ class ModalTopic extends Component {
   handleOnChangeInput = (e, id) => {
     let copystate = { ...this.state };
     copystate[id] = e.target.value;
+    console.log(e.target.value);
     this.setState({
       ...copystate,
     });
   };
 
   checkValideInput = () => {
-    let isValide = true;
     let arrInput = [
       "name",
       "description",
@@ -63,12 +63,25 @@ class ModalTopic extends Component {
     ];
     for (let i = 0; i < arrInput.length; i++) {
       if (!this.state[arrInput[i]]) {
-        isValide = false;
         alert("Missing parameter " + arrInput[i]);
-        break;
+        return false;
       }
     }
-    return isValide;
+    let { startdate, firstdate, finaldate } = this.state;
+    startdate = new Date(startdate).getTime();
+    firstdate = new Date(firstdate).getTime();
+    finaldate = new Date(finaldate).getTime();
+
+    if (startdate > firstdate) {
+      alert("Start date must be smaller than first date");
+      return false;
+    }
+    if (firstdate > finaldate) {
+      alert("First date  must be smaller than Final date");
+      return false;
+    }
+
+    return true;
   };
 
   handleAddNewTopic = () => {
@@ -228,7 +241,7 @@ class ModalTopic extends Component {
                   onChange={(e) => {
                     this.handleOnChangeInput(e, "startdate");
                   }}
-                  value={this.state.startdate}
+                  value={this.state.startdate.split(".")[0]}
                 />
               </div>
               <div className="input-container">
@@ -238,7 +251,7 @@ class ModalTopic extends Component {
                   onChange={(e) => {
                     this.handleOnChangeInput(e, "firstdate");
                   }}
-                  value={this.state.firstdate}
+                  value={this.state.firstdate.split(".")[0]}
                 />
               </div>
               <div className="input-container">
@@ -248,7 +261,7 @@ class ModalTopic extends Component {
                   onChange={(e) => {
                     this.handleOnChangeInput(e, "finaldate");
                   }}
-                  value={this.state.finaldate}
+                  value={this.state.finaldate.split(".")[0]}
                 />
               </div>
             </div>

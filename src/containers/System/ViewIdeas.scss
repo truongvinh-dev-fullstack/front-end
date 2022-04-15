@@ -1,0 +1,62 @@
+.view-ideas-contaner {
+    height: 500px;
+    border: 1px solid red;
+    display: flex;
+    .content-left{
+        width: 30%;
+        border: 1px solid green;
+        height: 300px;
+
+        
+        .topic{
+            width: 30%;
+            margin: 0 auto;
+            cursor: pointer;
+            text-align: center;
+            border: 1px solid;
+            &.active{
+            background-color: rgb(189, 239, 24);
+        }
+        }
+        
+    }
+    .content-right{
+        width: 70%;
+        border: 1px solid orange;
+        height: 300px;
+        .ideas{
+            width: 80%;
+            border: 1px solid;
+            .idea-title{
+                font-size: 15px;
+                font-weight: 600;
+            }
+            .like-dislike{
+                width: 20%;
+                height: 100px;
+                border: 1px solid orchid;
+                display: flex;
+                gap: 30px;
+                .icon{
+                    color: rgb(228, 202, 169);
+                }
+                .active{
+                    color: rgb(42, 7, 214);
+                }
+                i {
+                  font-size: 40px;
+                }
+                span {
+                    margin-left: 5px;
+                }
+            }
+
+            .comment-container {
+                .list-comment{
+                    border: 2px solid red;
+                }
+            }
+            
+        }
+    }
+}

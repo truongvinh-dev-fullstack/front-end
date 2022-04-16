@@ -66,6 +66,24 @@ const downloadFile = (id) => {
   return axios.get(`/api/download-idea?id=${id}`, { responseType: "blob" });
 };
 
+const getIdeasByUserTopic = (userId, topicId) => {
+  return axios.get(
+    `/api/get-all-idea-by-user-topic?userId=${userId}&topicId=${topicId}`
+  );
+};
+
+const deleteFileByIdea = (data) => {
+  return axios.delete("/api/delete-file-idea", { data: data });
+};
+
+const updateFileIdea = (data) => {
+  return axios.post("/api/update-file-idea", data);
+};
+
+const deleteIdeaByUser = (data) => {
+  return axios.delete("/api/delete-idea", { data: data });
+};
+
 export {
   getAllTopics,
   createNewTopic,
@@ -83,4 +101,8 @@ export {
   deleteCommentService,
   createNewIdea,
   downloadFile,
+  getIdeasByUserTopic,
+  deleteFileByIdea,
+  updateFileIdea,
+  deleteIdeaByUser,
 };

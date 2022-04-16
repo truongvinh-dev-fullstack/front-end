@@ -73,6 +73,7 @@ class UserManage extends Component {
         alert(response.message);
       } else {
         await this.getAllUserFromReact();
+        this.getCurrentUserPage(1);
         this.setState({
           isOpenModalUser: false,
         });

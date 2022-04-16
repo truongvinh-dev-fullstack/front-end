@@ -14,6 +14,7 @@ class ModalIdea extends Component {
       startdate: "",
       firstdate: "",
       finaldate: "",
+      checkbox: false,
 
       formData: "",
     };
@@ -71,17 +72,21 @@ class ModalIdea extends Component {
   handleAddNewIdea = () => {
     let check = this.checkValideInput();
     if (check) {
-      let { name, description, topicId, formData } = this.state;
-      formData.append("name", name);
-      formData.append("description", description);
-      formData.append("topicId", topicId);
-      formData.append("userId", this.props.userId);
-      this.setState({
-        formData: formData,
-      });
-      this.props.createNewIdea(formData);
-      console.log("Done");
-      this.props.toggleModal();
+      if (!this.state.checkbox) {
+        alert("You have not selected the terms");
+      } else {
+        let { name, description, topicId, formData } = this.state;
+        formData.append("name", name);
+        formData.append("description", description);
+        formData.append("topicId", topicId);
+        formData.append("userId", this.props.userId);
+        this.setState({
+          formData: formData,
+        });
+        this.props.createNewIdea(formData);
+        console.log("Done");
+        this.props.toggleModal();
+      }
     }
   };
 
@@ -92,6 +97,13 @@ class ModalIdea extends Component {
     this.setState({
       formData: formData,
     });
+  };
+
+  handleOnChangeCheckbox = (e) => {
+    this.setState({
+      checkbox: !this.state.checkbox,
+    });
+    console.log(this.state.checkbox);
   };
 
   render() {
@@ -165,6 +177,16 @@ class ModalIdea extends Component {
                   }}
                   style={{ border: "none" }}
                 />
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  value={true}
+                  onClick={(e) => {
+                    this.handleOnChangeCheckbox(e);
+                  }}
+                />
+                Đồng ý với các điều khoản
               </div>
             </div>
           </ModalBody>

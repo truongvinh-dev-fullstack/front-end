@@ -8,6 +8,7 @@ import Header from "../containers/Header/Header";
 import ManageTopics from "../containers/System/Admin/ManageTopics";
 import ViewIdeas from "../containers/System/ViewIdeas";
 import ViewStaff from "../containers/System/ViewStaff";
+import ManageIdeaByStaff from "../containers/System/ManageIdeaByStaff";
 
 class System extends Component {
   render() {
@@ -24,14 +25,18 @@ class System extends Component {
               <Route path="/system/view-ideas" component={ViewIdeas} />
               <Route path="/system/view-staff" component={ViewStaff} />
               <Route
+                path="/system/manage-idea-by-staff"
+                component={ManageIdeaByStaff}
+              />
+              {/* <Route
                 path="/system/register-package-group-or-account"
                 component={RegisterPackageGroupOrAcc}
-              />
-              <Route
+              /> */}
+              {/* <Route
                 component={() => {
                   return <Redirect to={systemMenuPath} />;
                 }}
-              />
+              /> */}
             </Switch>
           </div>
         </div>

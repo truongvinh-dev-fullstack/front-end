@@ -3,18 +3,47 @@ import { connect } from "react-redux";
 
 import * as actions from "../../store/actions";
 import Navigator from "../../components/Navigator";
-import { adminMenu } from "./menuApp";
+import { adminMenu, QAMenu, StaffMenu } from "./menuApp";
 import "./Header.scss";
 
 class Header extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      menu: [],
+    };
+  }
+
+  componentDidMount() {
+    this.checkmenu(this.props.userInfo.role);
+  }
+
+  checkmenu = (role) => {
+    if (role == "admin") {
+      this.setState({
+        menu: adminMenu,
+      });
+    }
+    if (role == "staff") {
+      this.setState({
+        menu: StaffMenu,
+      });
+    }
+    if (role == "manage" || role == "coordinator") {
+      this.setState({
+        menu: QAMenu,
+      });
+    }
+  };
   render() {
     const { processLogout } = this.props;
+    const { menu } = this.state;
 
     return (
       <div className="header-container">
         {/* thanh navigator */}
         <div className="header-tabs-container">
-          <Navigator menus={adminMenu} />
+          <Navigator menus={menu} />
         </div>
 
         {/* nút logout */}
@@ -29,6 +58,7 @@ class Header extends Component {
 const mapStateToProps = (state) => {
   return {
     isLoggedIn: state.user.isLoggedIn,
+    userInfo: state.user.userInfo,
   };
 };
 

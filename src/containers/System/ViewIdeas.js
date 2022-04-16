@@ -16,8 +16,11 @@ import {
   handleEditComment,
   deleteCommentService,
   downloadFile,
+  createNewIdea,
 } from "../../services/topicService";
 import ModalComment from "./ModalComment";
+import ReactPaginate from "react-paginate";
+import ModalIdea from "./ModalIdea";
 
 class ViewIdeas extends Component {
   constructor(prop) {
@@ -25,6 +28,7 @@ class ViewIdeas extends Component {
     this.state = {
       arrTopics: [],
       arrIdeas: [],
+      newIdeas: [],
       userInfo: {},
       arrStatusByUser: [],
       topicName: "",
@@ -36,27 +40,46 @@ class ViewIdeas extends Component {
       allComment: [],
       newComments: [],
       topicId: "",
+      isOpenModalIdea: false,
+      topic: "",
+      StartDate: "",
+      EndDate: "",
+      roleStaff: false,
     };
   }
 
   componentDidMount() {
     this.props.getAllTopicRedux();
+    this.setState({
+      userInfo: this.props.userInfo,
+    });
+    this.checkRoleStaff(this.props.userInfo.role);
   }
+
+  checkRoleStaff = (role) => {
+    if (role == "staff") {
+      this.setState({
+        roleStaff: true,
+      });
+    }
+  };
 
   async componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.topics !== this.props.topics) {
+      console.log("check props: ", this.props);
       this.setState({
         arrTopics: this.props.topics,
         topicId: this.props.topics[0].id,
+        topic: this.props.topics[0],
+        StartDate: this.props.topics[0].start_date,
+        EndDate: this.props.topics[0].final_closure_date,
       });
     }
-    if (prevState.arrTopics !== this.state.arrTopics) {
-      this.getAllIdeasByTopic(this.state.arrTopics[0].id);
+    if (prevState.topic !== this.state.topic) {
+      this.getAllIdeasByTopic(this.state.topic);
     }
-    if (prevProps.userInfo !== this.props.userInfo) {
-      this.setState({
-        userInfo: this.props.userInfo,
-      });
+    if (prevState.arrIdeas !== this.state.arrIdeas) {
+      this.getCurrentIdeaPage(1);
     }
 
     if (prevState.status !== this.state.status) {
@@ -85,23 +108,26 @@ class ViewIdeas extends Component {
     }
   }
 
-  getAllIdeasByTopic = async (id) => {
+  getAllIdeasByTopic = async (topic) => {
     this.setState({
-      topicId: id,
+      topicId: topic.id,
+      topic: topic,
+      StartDate: topic.start_date,
+      EndDate: topic.final_closure_date,
     });
-    if (id) {
-      let res = await getAllIdeasByTopic(id);
+    if (topic) {
+      let res = await getAllIdeasByTopic(topic.id);
       this.setState({
         arrIdeas: res.data,
       });
 
       let userId = this.props.userInfo.id;
-      let data = await getStatusByUserIdAndTopic(userId, id);
+      let data = await getStatusByUserIdAndTopic(userId, topic.id);
       this.setState({
         arrStatusByUser: data.data,
       });
 
-      let getAllLike = await getAllLikeByTopic(id);
+      let getAllLike = await getAllLikeByTopic(topic.id);
       console.log("check getAllLike: ", getAllLike);
       if (getAllLike) {
         this.setState({
@@ -109,7 +135,7 @@ class ViewIdeas extends Component {
         });
       }
 
-      let getAllDisLike = await getAllDisLikeByTopic(id);
+      let getAllDisLike = await getAllDisLikeByTopic(topic.id);
       if (getAllDisLike) {
         this.setState({
           arrAllDisLikeByTopic: getAllDisLike.data,
@@ -244,10 +270,61 @@ class ViewIdeas extends Component {
     });
   };
 
+  getCurrentIdeaPage = (currentPage) => {
+    let arrIdeas = this.state.arrIdeas;
+    let newIdeas = [];
+    for (let i = currentPage * 5 - 5; i < currentPage * 5; i++) {
+      if (i >= arrIdeas.length) {
+        break;
+      } else {
+        let obj = arrIdeas[i];
+        newIdeas.push(obj);
+      }
+    }
+    this.setState({
+      newIdeas: newIdeas,
+    });
+  };
+
+  handleClickPage = (data) => {
+    let currentPage = data.selected + 1;
+    this.getCurrentIdeaPage(currentPage);
+  };
+
+  handleCreateNewIdea = () => {
+    this.setState({
+      isOpenModalIdea: true,
+    });
+  };
+
+  toggleModaIdea = () => {
+    this.setState({
+      isOpenModalIdea: !this.state.isOpenModalIdea,
+    });
+  };
+
+  createNewIdea = async (data) => {
+    if (data) {
+      let res = await createNewIdea(data);
+      console.log(res);
+      this.getAllIdeasByTopic(this.state.topic);
+    }
+  };
+
   render() {
     let userInfo = this.props.userInfo;
-    let { topicId, arrTopics, arrIdeas, arrStatusByUser, arrAllLikeByTopic } =
-      this.state;
+    let {
+      topicId,
+      arrTopics,
+      newIdeas,
+      arrStatusByUser,
+      isOpenModalIdea,
+      topic,
+      StartDate,
+      EndDate,
+      roleStaff,
+    } = this.state;
+    console.log("Check state: ", this.state);
     return (
       <div className="view-ideas-contaner container">
         <div className="content-left">
@@ -257,7 +334,7 @@ class ViewIdeas extends Component {
               return (
                 <div
                   className={topicId == item.id ? "topic active" : "topic"}
-                  onClick={() => this.getAllIdeasByTopic(item.id)}
+                  onClick={() => this.getAllIdeasByTopic(item)}
                 >
                   {item.topic_name}
                 </div>
@@ -265,9 +342,38 @@ class ViewIdeas extends Component {
             })}
         </div>
         <div className="content-right">
-          {arrIdeas &&
-            arrIdeas.length > 0 &&
-            arrIdeas.map((item, index) => {
+          <div className="content-header">
+            <div>
+              <div>
+                <span>
+                  Start date: {moment(StartDate).format("YYYY-MM-DD")}
+                </span>
+                <span>End date: {moment(EndDate).format("YYYY-MM-DD")}</span>
+              </div>
+            </div>
+            {roleStaff && (
+              <div>
+                <button
+                  onClick={() => {
+                    this.handleCreateNewIdea();
+                  }}
+                >
+                  Add new Idea
+                </button>
+                <ModalIdea
+                  isOpenModalIdea={isOpenModalIdea}
+                  userId={userInfo.id}
+                  toggleModal={this.toggleModaIdea}
+                  topic={topic}
+                  createNewIdea={this.createNewIdea}
+                />
+              </div>
+            )}
+          </div>
+
+          {newIdeas &&
+            newIdeas.length > 0 &&
+            newIdeas.map((item, index) => {
               let status = 3;
               arrStatusByUser.map((item2, index2) => {
                 if (item2.ideaId == item.id) {
@@ -336,6 +442,7 @@ class ViewIdeas extends Component {
                     </button>
                     <ModalComment
                       isOpen={this.state.isOpenModal}
+                      topic={topic}
                       ideaId={this.state.ideaId}
                       userId={userInfo.id}
                       allComment={this.state.newComments}
@@ -350,6 +457,24 @@ class ViewIdeas extends Component {
                 </div>
               );
             })}
+          <ReactPaginate
+            previousLabel="Previous"
+            nextLabel="Next"
+            breakLabel="..."
+            pageCount={20}
+            marginPagesDisplayed={3}
+            onPageChange={this.handleClickPage}
+            containerClassName="pagination justify-content-center"
+            pageClassName="page-item"
+            previousClassName="page-item"
+            nextClassName="page-item"
+            pageLinkClassName="page-link"
+            previousLinkClassName="page-link"
+            nextLinkClassName="page-link"
+            breakClassName="page-item"
+            breakLinkClassName="page-link"
+            activeClassName="active"
+          />
         </div>
       </div>
     );

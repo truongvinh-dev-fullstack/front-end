@@ -40,31 +40,50 @@ class ModalComment extends Component {
     });
   };
 
+  checkdatetime = () => {
+    let currentDate = new Date().getTime();
+    let finalDate = new Date(this.props.topic.final_closure_date).getTime();
+    if (currentDate < finalDate) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   handlePostComment = (event) => {
-    console.log("Done");
-    if (event.key === "Enter") {
-      let { userId, ideaId } = this.props;
-      let { comment } = this.state;
-      if (comment !== "") {
-        this.props.postComment(userId, ideaId, comment);
-        console.log("Check: ", userId, ideaId, comment);
-        this.setState({
-          comment: "",
-        });
+    let check = this.checkdatetime();
+    if (check) {
+      if (event.key === "Enter") {
+        let { userId, ideaId } = this.props;
+        let { comment } = this.state;
+        if (comment !== "") {
+          this.props.postComment(userId, ideaId, comment);
+          console.log("Check: ", userId, ideaId, comment);
+          this.setState({
+            comment: "",
+          });
+        }
       }
+    } else {
+      alert("Can't comment");
     }
   };
 
   handleEditComment = (event, id) => {
-    if (event.key === "Enter") {
-      let { commentEdit } = this.state;
-      if (commentEdit !== "") {
-        this.props.EditComment(id, commentEdit);
-        this.setState({
-          commentEdit: "",
-          commentId: "",
-        });
+    let check = this.checkdatetime();
+    if (check) {
+      if (event.key === "Enter") {
+        let { commentEdit } = this.state;
+        if (commentEdit !== "") {
+          this.props.EditComment(id, commentEdit);
+          this.setState({
+            commentEdit: "",
+            commentId: "",
+          });
+        }
       }
+    } else {
+      alert("Can't edit comment");
     }
   };
 
@@ -89,7 +108,12 @@ class ModalComment extends Component {
   };
 
   handleDeleteComment = (id) => {
-    this.props.deleteComment(id);
+    let check = this.checkdatetime();
+    if (check) {
+      this.props.deleteComment(id);
+    } else {
+      alert("Can't delete comment");
+    }
   };
 
   render() {

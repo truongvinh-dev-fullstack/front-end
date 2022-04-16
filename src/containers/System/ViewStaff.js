@@ -53,8 +53,8 @@ class ViewStaff extends Component {
     if (prevProps.topics !== this.props.topics) {
       this.setState({
         arrTopics: this.props.topics,
-
         topic: this.props.topics[0],
+        topicId: this.props.topics[0].id,
       });
     }
     if (prevState.arrTopics !== this.state.arrTopics) {
@@ -71,7 +71,6 @@ class ViewStaff extends Component {
 
     if (prevState.status !== this.state.status) {
       let userId = this.props.userInfo.id;
-      let topic_name = this.state.topicName;
       let topicId = this.state.topicId;
 
       let data = await getStatusByUserIdAndTopic(userId, topicId);

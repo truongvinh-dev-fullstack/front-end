@@ -11,6 +11,7 @@ import ViewIdeas from "../containers/System/ViewIdeas";
 import ManageIdea from "../containers/System/Staff/ManageIdea";
 import ManageIdeaByStaff from "../containers/System/ManageIdeaByStaff";
 import ManageDepartment from "../containers/System/QA/ManageDepartment";
+import DashboardAdmin from "../containers/System/Admin/DashboardAdmin";
 
 class System extends Component {
   render() {
@@ -22,6 +23,11 @@ class System extends Component {
         <div className="system-container">
           <div className="system-list">
             <Switch>
+              {/* admin */}
+              <Route
+                path="/system/dashnoard-admin"
+                component={DashboardAdmin}
+              />
               <Route
                 path="/system/user-manage"
                 component={() => {

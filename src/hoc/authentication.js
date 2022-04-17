@@ -19,7 +19,3 @@ export const userIsNotAuthenticated = connectedRouterRedirect({
   allowRedirectBack: false,
 });
 
-export const userisAdmin = (role, component) => {
-  if (role == "admin") return component;
-  if (role == "staff") return <Redirect to={"/system/view-ideas"} />;
-};

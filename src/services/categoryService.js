@@ -16,7 +16,12 @@ const deleteCategoryService = (id) => {
   return axios.delete("/api/delete-category", { data: { id: id } });
 };
 
+const getAllCategory = () => {
+  return axios.get("/api/get-all-category");
+};
+
 export {
+  getAllCategory,
   getAllCategoryById,
   createNewCategory,
   editCategoryService,

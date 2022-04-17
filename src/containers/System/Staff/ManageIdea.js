@@ -113,26 +113,25 @@ class ManageIdea extends Component {
     }
   };
 
-  handleDeleteIdeaByUser = async (id, linkFile) => {
+  handleDeleteIdeaByUser = async (id, file_name) => {
     if (!id) {
       console.log("Missing parameter!");
     } else {
       let check = window.confirm("You want to delete!");
       if (check) {
-        let res = await deleteIdeaByUser({ id: id, linkFile: linkFile });
+        let res = await deleteIdeaByUser({ id: id, file_name: file_name });
         console.log(res);
         this.getAllIdeasByCategory();
       }
     }
   };
 
-  handleDeleteFile = async (ideaId, file_name, path) => {
+  handleDeleteFile = async (ideaId, file_name) => {
     let check = window.confirm("You want to delete!");
     if (check) {
       let res = await deleteFileByIdea({
         ideaId: ideaId,
         file_name: file_name,
-        path: path,
       });
       this.getAllIdeasByCategory();
     }
@@ -235,7 +234,7 @@ class ManageIdea extends Component {
                     <div>
                       <button
                         onClick={() => {
-                          this.handleDeleteIdeaByUser(item.id, item.linkFile);
+                          this.handleDeleteIdeaByUser(item.id, item.file_name);
                         }}
                       >
                         Delete Idea
@@ -253,11 +252,7 @@ class ManageIdea extends Component {
                         <div>
                           <button
                             onClick={() => {
-                              this.handleDeleteFile(
-                                item.id,
-                                item.file_name,
-                                item.linkFile
-                              );
+                              this.handleDeleteFile(item.id, item.file_name);
                             }}
                           >
                             Delete

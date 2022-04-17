@@ -32,7 +32,7 @@ export const StaffMenu = [
   {
     name: "Menu",
     menus: [
-      { name: "View all ideas", link: "/system/view-ideas" },
+      { name: "Dashboard", link: "/system/dashnoard-admin" },
       { name: "Manage Idea", link: "/system/manage-idea" },
     ],
   },

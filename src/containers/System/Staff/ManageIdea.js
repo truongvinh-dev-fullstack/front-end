@@ -103,7 +103,6 @@ class ManageIdea extends Component {
   createNewIdea = async (data) => {
     let check = this.checkDateTime();
     if (check) {
-      alert("ok");
       if (data) {
         let res = await createNewIdea(data);
         console.log(res);

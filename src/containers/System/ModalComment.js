@@ -27,9 +27,9 @@ class ModalComment extends Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    // if (prevProps.allComment !== this.props.allComment) {
-    //   this.getCurrentCommentPage(1);
-    // }
+    if (prevProps.allComment !== this.props.allComment) {
+      // this.getCurrentCommentPage(1);
+    }
   }
 
   handleOnChangeInput = (e, id) => {
@@ -52,6 +52,7 @@ class ModalComment extends Component {
 
   handlePostComment = (event) => {
     let check = this.checkdatetime();
+    console.log(check);
     if (check) {
       if (event.key === "Enter") {
         let { userId, ideaId } = this.props;
@@ -83,7 +84,12 @@ class ModalComment extends Component {
         }
       }
     } else {
+      this.setState({
+        commentEdit: "",
+        commentId: "",
+      });
       alert("Can't edit comment");
+      return;
     }
   };
 
@@ -239,7 +245,7 @@ class ModalComment extends Component {
               previousLabel="Previous"
               nextLabel="Next"
               breakLabel="..."
-              pageCount={20}
+              pageCount={this.props.pageCount}
               marginPagesDisplayed={3}
               onPageChange={this.handleClickPage}
               containerClassName="pagination justify-content-center"

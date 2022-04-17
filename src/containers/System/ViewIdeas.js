@@ -44,11 +44,12 @@ class ViewIdeas extends Component {
       isOpenModalIdea: false,
       category: "",
       StartDate: "",
-      EndDate: "",
+      FinalDate: "",
       arrDepartment: [],
       departmentId: "",
       arrCategoris: [],
       pageCount: "",
+      pageCountComment: "",
     };
   }
 
@@ -66,7 +67,7 @@ class ViewIdeas extends Component {
         categoryId: this.state.arrCategoris[0].id,
         category: this.state.arrCategoris[0],
         StartDate: this.state.arrCategoris[0].start_date,
-        EndDate: this.state.arrCategoris[0].final_closure_date,
+        FinalDate: this.state.arrCategoris[0].final_closure_date,
       });
     }
     if (prevState.category !== this.state.category) {
@@ -127,7 +128,7 @@ class ViewIdeas extends Component {
       categoryId: category.id,
       category: category,
       StartDate: category.start_date,
-      EndDate: category.final_closure_date,
+      FinalDate: category.final_closure_date,
     });
     if (category) {
       let res = await getAllIdeasByCategory(category.id);
@@ -229,6 +230,11 @@ class ViewIdeas extends Component {
       let res = await getAllCommentByIdea(ideaId);
       this.setState({ allComment: res.data });
       this.getCurrentCommentPage(1);
+
+      let pageCount = Math.ceil(res.data.length / 5);
+      this.setState({
+        pageCountComment: pageCount,
+      });
     }
   };
 
@@ -341,6 +347,7 @@ class ViewIdeas extends Component {
     let userInfo = this.props.userInfo;
     let {
       arrDepartment,
+      pageCountComment,
       arrCategoris,
       categoryId,
       newIdeas,
@@ -349,7 +356,7 @@ class ViewIdeas extends Component {
       isOpenModalIdea,
       category,
       StartDate,
-      EndDate,
+      FinalDate,
       roleStaff,
     } = this.state;
     console.log("Check state: ", this.state);
@@ -392,7 +399,9 @@ class ViewIdeas extends Component {
                 <span>
                   Start date: {moment(StartDate).format("YYYY-MM-DD")}
                 </span>
-                <span>End date: {moment(EndDate).format("YYYY-MM-DD")}</span>
+                <span>
+                  Final date: {moment(FinalDate).format("YYYY-MM-DD")}
+                </span>
               </div>
             </div>
             {roleStaff && (
@@ -491,6 +500,7 @@ class ViewIdeas extends Component {
                       ideaId={this.state.ideaId}
                       userId={userInfo.id}
                       allComment={this.state.newComments}
+                      pageCount={pageCountComment}
                       toggleModal={this.toggleModalComment}
                       GetAllComment={this.handleGetAllComment}
                       postComment={this.handlePostComment}

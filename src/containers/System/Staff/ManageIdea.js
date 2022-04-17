@@ -14,7 +14,7 @@ import {
   deleteFileByIdea,
   updateFileIdea,
 } from "../../../services/topicService";
-import _ from "lodash";
+import _, { flatMap } from "lodash";
 import ReactPaginate from "react-paginate";
 
 class ManageIdea extends Component {
@@ -40,7 +40,17 @@ class ManageIdea extends Component {
     if (prevState.arrCategoris !== this.state.arrCategoris) {
       this.getAllIdeasByCategory();
     }
+    if (prevState.category !== this.state.category) {
+      this.getAllIdeasByCategory();
+    }
   }
+
+  checkDateTime = () => {
+    let currentDate = new Date().getTime();
+    let firstDate = new Date(this.state.category.first_closure_date).getTime();
+    if (currentDate < firstDate) return true;
+    if (currentDate > firstDate) return false;
+  };
 
   getAllCategotyByDepartment = async (id) => {
     if (id) {
@@ -58,9 +68,14 @@ class ManageIdea extends Component {
   };
 
   handleCreateNewIdea = () => {
-    this.setState({
-      isOpenModalIdea: !this.state.isOpenModalIdea,
-    });
+    let check = this.checkDateTime();
+    if (check) {
+      this.setState({
+        isOpenModalIdea: !this.state.isOpenModalIdea,
+      });
+    } else {
+      alert("Time up!");
+    }
   };
 
   toggleModaIdea = () => {
@@ -78,11 +93,23 @@ class ManageIdea extends Component {
     });
   };
 
+  handleClickCategory = (category) => {
+    this.setState({
+      category: category,
+    });
+  };
+
   createNewIdea = async (data) => {
-    if (data) {
-      let res = await createNewIdea(data);
-      console.log(res);
-      this.getAllIdeasByCategory();
+    let check = this.checkDateTime();
+    if (check) {
+      alert("ok");
+      if (data) {
+        let res = await createNewIdea(data);
+        console.log(res);
+        this.getAllIdeasByCategory();
+      }
+    } else {
+      alert("Time up!");
     }
   };
 
@@ -113,19 +140,24 @@ class ManageIdea extends Component {
 
   handleUpdateFileIdea = async (ideaId) => {
     let { formData, checkbox } = this.state;
-    if (checkbox) {
-      if (!formData) {
-        console.log("Not file");
+    let check = this.checkDateTime();
+    if (check) {
+      if (checkbox) {
+        if (!formData) {
+          console.log("Not file");
+        } else {
+          formData.append("ideaId", ideaId);
+          this.setState({
+            loadPage: !this.state.loadPage,
+          });
+          let res = await updateFileIdea(formData);
+          this.getAllIdeasByCategory();
+        }
       } else {
-        formData.append("ideaId", ideaId);
-        this.setState({
-          loadPage: !this.state.loadPage,
-        });
-        let res = await updateFileIdea(formData);
-        this.getAllIdeasByCategory();
+        alert("You have not selected the terms");
       }
     } else {
-      alert("You have not selected the terms");
+      alert("Time up!");
     }
   };
 
@@ -159,10 +191,10 @@ class ManageIdea extends Component {
                 arrCategoris.length > 0 &&
                 arrCategoris.map((item, index) => {
                   return (
-                    <div className="department">
+                    <div className="category">
                       <button
                         onClick={() => {
-                          this.handleClickDepartment(item.id);
+                          this.handleClickCategory(item);
                         }}
                       >
                         {item.category_name}

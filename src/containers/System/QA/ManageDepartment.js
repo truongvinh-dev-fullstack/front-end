@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { toast } from "react-toastify";
 import {
   getAllDepartment,
   createNewDepartment,
@@ -73,9 +74,17 @@ class ManageDepartment extends Component {
     } else {
       if (action == "Add") {
         let res = await createNewDepartment({ name: name });
+        if (res.errCode == 0) {
+          toast.success("Create department successfully!");
+        }
         this.getAllDepartment();
       } else {
         let res = await editDepartmentService({ id: id, name: name });
+        if (res.errCode == 0) {
+          toast.success("Update department successfully!");
+        }
+        toast.success("Update department successfully!");
+
         this.getAllDepartment();
       }
       this.setState({

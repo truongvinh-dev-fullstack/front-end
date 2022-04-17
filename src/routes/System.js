@@ -14,14 +14,23 @@ import ManageDepartment from "../containers/System/QA/ManageDepartment";
 
 class System extends Component {
   render() {
-    const { systemMenuPath, isLoggedIn } = this.props;
+    const { systemMenuPath, isLoggedIn, userInfo } = this.props;
+    console.log("check prop: ", this.props.userInfo.role == "admin");
     return (
       <React.Fragment>
         {isLoggedIn && <Header />}
         <div className="system-container">
           <div className="system-list">
             <Switch>
-              <Route path="/system/user-manage" component={UserManage} />
+              <Route
+                path="/system/user-manage"
+                component={() => {
+                  if (this.props.userInfo.role == "admin")
+                    return <UserManage />;
+                  if (userInfo.role == "staff")
+                    return <Redirect to={"/system/view-ideas"} />;
+                }}
+              />
               <Route
                 path="/system/category-manage"
                 component={ManageCategory}
@@ -58,6 +67,7 @@ const mapStateToProps = (state) => {
   return {
     systemMenuPath: state.app.systemMenuPath,
     isLoggedIn: state.user.isLoggedIn,
+    userInfo: state.user.userInfo,
   };
 };
 

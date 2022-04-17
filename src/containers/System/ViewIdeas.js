@@ -359,7 +359,7 @@ class ViewIdeas extends Component {
       FinalDate,
       roleStaff,
     } = this.state;
-    console.log("Check state: ", this.state);
+    console.log("Check state: ", newIdeas);
     return (
       <div className="view-ideas-contaner container">
         <div className="content-left">
@@ -440,6 +440,9 @@ class ViewIdeas extends Component {
 
               return (
                 <div className="ideas">
+                  <div className="title">
+                    Poster : {item.User.lastname + " " + item.User.firstname}
+                  </div>
                   <div className="idea-title">{item.idea_name}</div>
                   <div className="idea-description">{item.description}</div>
                   <div>

@@ -88,7 +88,21 @@ const deleteLikeDisLikeByIdea = (id) => {
   return axios.delete("/api/delete-like-dislike-by-idea", { data: { id: id } });
 };
 
+const getAllIdea = () => {
+  return axios.get("/api/get-all-ideas");
+};
+
+const getIdeaLikeMost = () => {
+  return axios.get("/api/idea-like-most");
+};
+
+const getIdeaNewPost = () => {
+  return axios.get("/api/get-idea-new");
+};
 export {
+  getIdeaNewPost,
+  getIdeaLikeMost,
+  getAllIdea,
   getAllTopics,
   createNewTopic,
   editTopicService,

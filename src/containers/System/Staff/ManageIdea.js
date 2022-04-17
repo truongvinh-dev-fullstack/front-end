@@ -13,6 +13,7 @@ import {
   deleteIdeaByUser,
   deleteFileByIdea,
   updateFileIdea,
+  deleteLikeDisLikeByIdea,
 } from "../../../services/topicService";
 import _, { flatMap } from "lodash";
 import ReactPaginate from "react-paginate";
@@ -120,6 +121,7 @@ class ManageIdea extends Component {
       let check = window.confirm("You want to delete!");
       if (check) {
         let res = await deleteIdeaByUser({ id: id, file_name: file_name });
+        await deleteLikeDisLikeByIdea(id);
         console.log(res);
         this.getAllIdeasByCategory();
       }

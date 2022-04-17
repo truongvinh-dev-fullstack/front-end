@@ -84,6 +84,10 @@ const deleteIdeaByUser = (data) => {
   return axios.delete("/api/delete-idea", { data: data });
 };
 
+const deleteLikeDisLikeByIdea = (id) => {
+  return axios.delete("/api/delete-like-dislike-by-idea", { data: { id: id } });
+};
+
 export {
   getAllTopics,
   createNewTopic,
@@ -105,4 +109,5 @@ export {
   deleteFileByIdea,
   updateFileIdea,
   deleteIdeaByUser,
+  deleteLikeDisLikeByIdea,
 };

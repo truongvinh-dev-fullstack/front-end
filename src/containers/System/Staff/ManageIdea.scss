@@ -1,0 +1,14 @@
+.ideas-content{
+    width: 70%;
+    margin: 0 auto;
+    border: 1px solid;
+    display: flex;
+    .content-left{
+        width: 30%;
+        border: 1px solid red;
+    }
+    .content-right{
+        width: 70%;
+        border: 1px solid rgb(47, 28, 28);
+    }
+}

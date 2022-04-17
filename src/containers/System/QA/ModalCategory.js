@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap";
 import _ from "lodash";
 
-class ModalTopic extends Component {
+class ModalCategory extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -17,22 +17,22 @@ class ModalTopic extends Component {
   }
 
   componentDidMount() {
-    let topic = this.props.editTopic;
-    if (topic && !_.isEmpty(topic)) {
+    let editCategory = this.props.editCategory;
+    if (editCategory && !_.isEmpty(editCategory)) {
       this.setState({
-        id: topic.id,
-        name: topic.topic_name,
-        description: topic.description,
-        startdate: topic.start_date,
-        firstdate: topic.first_closure_date,
-        finaldate: topic.final_closure_date,
+        id: editCategory.id,
+        name: editCategory.category_name,
+        description: editCategory.description,
+        startdate: editCategory.start_date,
+        firstdate: editCategory.first_closure_date,
+        finaldate: editCategory.final_closure_date,
       });
     }
 
     console.log("check did mount: ", this.props.editUser);
   }
 
-  toggle = () => {
+  toggleAdd = () => {
     this.setState({
       id: "",
       name: "",
@@ -41,7 +41,19 @@ class ModalTopic extends Component {
       firstdate: "",
       finaldate: "",
     });
-    this.props.toggleModalTopic();
+    this.props.toggleModalAdd();
+  };
+
+  toggleModalEdit = () => {
+    this.setState({
+      id: "",
+      name: "",
+      description: "",
+      startdate: "",
+      firstdate: "",
+      finaldate: "",
+    });
+    this.props.toggleModalEdit();
   };
 
   handleOnChangeInput = (e, id) => {
@@ -84,10 +96,10 @@ class ModalTopic extends Component {
     return true;
   };
 
-  handleAddNewTopic = () => {
+  handleAddNewCategory = () => {
     let check = this.checkValideInput();
     if (check) {
-      this.props.createNewTopic(this.state);
+      this.props.createNewCategory(this.state);
       console.log("Done");
     }
     this.setState({
@@ -100,24 +112,24 @@ class ModalTopic extends Component {
     });
   };
 
-  handleEditTopic = () => {
+  handleEditCategory = () => {
     let check = this.checkValideInput();
     if (check) {
-      this.props.DoEditTopic(this.state);
+      this.props.DoEditCategory(this.state);
 
       console.log("Done");
     }
   };
 
   render() {
-    console.log("Check state model: ", this.state);
+    // console.log("Check state model: ", this.state);
     return (
       <div>
         <Modal
           id="AddTopic"
           isOpen={this.props.isOpenAdd}
           toggle={() => {
-            this.toggle();
+            this.toggleAdd();
           }}
           size="lg"
           centered={true}
@@ -125,15 +137,15 @@ class ModalTopic extends Component {
         >
           <ModalHeader
             toggle={() => {
-              this.toggle();
+              this.toggleAdd();
             }}
           >
-            Create New User
+            Create New Category
           </ModalHeader>
           <ModalBody>
             <div className="modal-user-body">
               <div className="input-container">
-                <label>Topic Name</label>
+                <label>Category Name</label>
                 <input
                   type="text"
                   onChange={(e) => {
@@ -188,7 +200,7 @@ class ModalTopic extends Component {
             <Button
               color="primary"
               onClick={() => {
-                this.handleAddNewTopic();
+                this.handleAddNewCategory();
               }}
               className="px-3"
             >
@@ -209,7 +221,7 @@ class ModalTopic extends Component {
           id="EditUser"
           isOpen={this.props.isOpenEdit}
           toggle={() => {
-            this.toggle();
+            this.toggleModalEdit();
           }}
           size="lg"
           centered={true}
@@ -217,7 +229,7 @@ class ModalTopic extends Component {
         >
           <ModalHeader
             toggle={() => {
-              this.toggle();
+              this.toggleModalEdit();
             }}
           ></ModalHeader>
           <ModalBody>
@@ -278,7 +290,7 @@ class ModalTopic extends Component {
             <Button
               color="primary"
               onClick={() => {
-                this.handleEditTopic();
+                this.handleEditCategory();
               }}
               className="px-3"
             >
@@ -307,4 +319,4 @@ const mapDispatchToProps = (dispatch) => {
   return {};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ModalTopic);
+export default connect(mapStateToProps, mapDispatchToProps)(ModalCategory);

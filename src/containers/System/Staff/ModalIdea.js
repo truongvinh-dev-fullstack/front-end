@@ -9,8 +9,7 @@ class ModalIdea extends Component {
     this.state = {
       name: "",
       description: "",
-      topicName: "",
-      topicId: "",
+      categoryId: "",
       startdate: "",
       firstdate: "",
       finaldate: "",
@@ -23,15 +22,14 @@ class ModalIdea extends Component {
   componentDidMount() {}
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevProps.topic !== this.props.topic) {
-      let topic = this.props.topic;
-      if (topic && !_.isEmpty(topic)) {
+    if (prevProps.category !== this.props.category) {
+      let category = this.props.category;
+      if (category && !_.isEmpty(category)) {
         this.setState({
-          topicId: topic.id,
-          topicName: topic.topic_name,
-          startdate: topic.start_date,
-          firstdate: topic.first_closure_date,
-          finaldate: topic.final_closure_date,
+          categoryId: category.id,
+          startdate: category.start_date,
+          firstdate: category.first_closure_date,
+          finaldate: category.final_closure_date,
         });
       }
     }
@@ -40,7 +38,6 @@ class ModalIdea extends Component {
   toggle = () => {
     this.setState({
       name: "",
-      topicName: "",
       description: "",
       startdate: "",
       firstdate: "",
@@ -75,10 +72,10 @@ class ModalIdea extends Component {
       if (!this.state.checkbox) {
         alert("You have not selected the terms");
       } else {
-        let { name, description, topicId, formData } = this.state;
+        let { name, description, categoryId, formData } = this.state;
         formData.append("name", name);
         formData.append("description", description);
-        formData.append("topicId", topicId);
+        formData.append("categoryId", categoryId);
         formData.append("userId", this.props.userId);
         this.setState({
           formData: formData,
@@ -107,7 +104,7 @@ class ModalIdea extends Component {
   };
 
   render() {
-    // console.log("Check state model: ", this.state);
+    console.log("Check state model: ", this.state);
     return (
       <div>
         <Modal
@@ -153,7 +150,7 @@ class ModalIdea extends Component {
                   onChange={(e) => {
                     this.handleOnChangeInput(e, "topic");
                   }}
-                  value={this.props.topic.topic_name}
+                  value={this.props.category.category_name}
                   disabled
                 />
               </div>

@@ -5,7 +5,7 @@ import moment from "moment";
 import "./ViewIdeas.scss";
 import * as actions from "../../store/actions";
 import {
-  getAllIdeasByTopic,
+  getAllIdeasByCategory,
   handleLikeorDisLike,
   getStatusIsLike,
   getStatusByUserIdAndTopic,
@@ -18,20 +18,21 @@ import {
   downloadFile,
   createNewIdea,
 } from "../../services/topicService";
+import { getAllDepartment } from "../../services/departmentService";
+import { getAllCategoryById } from "../../services/categoryService";
 import ModalComment from "./ModalComment";
 import ReactPaginate from "react-paginate";
-import ModalIdea from "./ModalIdea";
+import ModalIdea from "./Staff/ModalIdea";
 
 class ViewIdeas extends Component {
   constructor(prop) {
     super(prop);
     this.state = {
-      arrTopics: [],
       arrIdeas: [],
       newIdeas: [],
       userInfo: {},
       arrStatusByUser: [],
-      topicName: "",
+
       status: true,
       arrAllLikeByTopic: [],
       arrAllDisLikeByTopic: [],
@@ -39,44 +40,40 @@ class ViewIdeas extends Component {
       ideaId: "",
       allComment: [],
       newComments: [],
-      topicId: "",
+      categoryId: "",
       isOpenModalIdea: false,
-      topic: "",
+      category: "",
       StartDate: "",
       EndDate: "",
-      roleStaff: false,
+      arrDepartment: [],
+      departmentId: "",
+      arrCategoris: [],
+      pageCount: "",
     };
   }
 
   componentDidMount() {
-    this.props.getAllTopicRedux();
+    this.getAllDepartment();
     this.setState({
       userInfo: this.props.userInfo,
     });
-    this.checkRoleStaff(this.props.userInfo.role);
   }
 
-  checkRoleStaff = (role) => {
-    if (role == "staff") {
-      this.setState({
-        roleStaff: true,
-      });
-    }
-  };
-
   async componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevProps.topics !== this.props.topics) {
+    if (prevState.arrCategoris !== this.state.arrCategoris) {
       console.log("check props: ", this.props);
       this.setState({
-        arrTopics: this.props.topics,
-        topicId: this.props.topics[0].id,
-        topic: this.props.topics[0],
-        StartDate: this.props.topics[0].start_date,
-        EndDate: this.props.topics[0].final_closure_date,
+        categoryId: this.state.arrCategoris[0].id,
+        category: this.state.arrCategoris[0],
+        StartDate: this.state.arrCategoris[0].start_date,
+        EndDate: this.state.arrCategoris[0].final_closure_date,
       });
     }
-    if (prevState.topic !== this.state.topic) {
-      this.getAllIdeasByTopic(this.state.topic);
+    if (prevState.category !== this.state.category) {
+      this.getAllIdeasByCategory(this.state.category);
+    }
+    if (prevState.departmentId !== this.state.departmentId) {
+      this.getAllCategotyByDepartment(this.state.departmentId);
     }
     if (prevState.arrIdeas !== this.state.arrIdeas) {
       this.getCurrentIdeaPage(1);
@@ -84,14 +81,14 @@ class ViewIdeas extends Component {
 
     if (prevState.status !== this.state.status) {
       let userId = this.props.userInfo.id;
-      let topicId = this.state.topicId;
+      let categoryId = this.state.categoryId;
 
-      let data = await getStatusByUserIdAndTopic(userId, topicId);
+      let data = await getStatusByUserIdAndTopic(userId, categoryId);
       this.setState({
         arrStatusByUser: data.data,
       });
 
-      let getAllLike = await getAllLikeByTopic(topicId);
+      let getAllLike = await getAllLikeByTopic(categoryId);
       console.log("check getAllLike: ", getAllLike);
       if (getAllLike) {
         this.setState({
@@ -99,7 +96,7 @@ class ViewIdeas extends Component {
         });
       }
 
-      let getAllDisLike = await getAllDisLikeByTopic(topicId);
+      let getAllDisLike = await getAllDisLikeByTopic(categoryId);
       if (getAllDisLike) {
         this.setState({
           arrAllDisLikeByTopic: getAllDisLike.data,
@@ -108,26 +105,47 @@ class ViewIdeas extends Component {
     }
   }
 
-  getAllIdeasByTopic = async (topic) => {
+  getAllDepartment = async () => {
+    let res = await getAllDepartment();
     this.setState({
-      topicId: topic.id,
-      topic: topic,
-      StartDate: topic.start_date,
-      EndDate: topic.final_closure_date,
+      arrDepartment: res.data,
+      departmentId: res.data[0].id,
     });
-    if (topic) {
-      let res = await getAllIdeasByTopic(topic.id);
+  };
+
+  getAllCategotyByDepartment = async (id) => {
+    if (id) {
+      let res = await getAllCategoryById(id);
+      this.setState({
+        arrCategoris: res.data,
+      });
+    }
+  };
+
+  getAllIdeasByCategory = async (category) => {
+    this.setState({
+      categoryId: category.id,
+      category: category,
+      StartDate: category.start_date,
+      EndDate: category.final_closure_date,
+    });
+    if (category) {
+      let res = await getAllIdeasByCategory(category.id);
       this.setState({
         arrIdeas: res.data,
       });
+      let pageCount = Math.ceil(res.data.length / 5);
+      this.setState({
+        pageCount: pageCount,
+      });
 
       let userId = this.props.userInfo.id;
-      let data = await getStatusByUserIdAndTopic(userId, topic.id);
+      let data = await getStatusByUserIdAndTopic(userId, category.id);
       this.setState({
         arrStatusByUser: data.data,
       });
 
-      let getAllLike = await getAllLikeByTopic(topic.id);
+      let getAllLike = await getAllLikeByTopic(category.id);
       console.log("check getAllLike: ", getAllLike);
       if (getAllLike) {
         this.setState({
@@ -135,7 +153,7 @@ class ViewIdeas extends Component {
         });
       }
 
-      let getAllDisLike = await getAllDisLikeByTopic(topic.id);
+      let getAllDisLike = await getAllDisLikeByTopic(category.id);
       if (getAllDisLike) {
         this.setState({
           arrAllDisLikeByTopic: getAllDisLike.data,
@@ -307,19 +325,29 @@ class ViewIdeas extends Component {
     if (data) {
       let res = await createNewIdea(data);
       console.log(res);
-      this.getAllIdeasByTopic(this.state.topic);
+      this.getAllIdeasByCategory(this.state.category);
     }
+  };
+
+  handleOnChangeDepartment = (e) => {
+    console.log("check select: ", e.target.value);
+    this.setState({
+      departmentId: e.target.value,
+    });
+    this.getAllCategotyByDepartment(e.target.value);
   };
 
   render() {
     let userInfo = this.props.userInfo;
     let {
-      topicId,
-      arrTopics,
+      arrDepartment,
+      arrCategoris,
+      categoryId,
       newIdeas,
+      pageCount,
       arrStatusByUser,
       isOpenModalIdea,
-      topic,
+      category,
       StartDate,
       EndDate,
       roleStaff,
@@ -328,15 +356,31 @@ class ViewIdeas extends Component {
     return (
       <div className="view-ideas-contaner container">
         <div className="content-left">
-          {arrTopics &&
-            arrTopics.length > 0 &&
-            arrTopics.map((item, index) => {
+          <div className="list-department">
+            <span>Choose department: </span>
+            <select
+              onChange={(e) => {
+                this.handleOnChangeDepartment(e);
+              }}
+            >
+              {arrDepartment &&
+                arrDepartment.length > 0 &&
+                arrDepartment.map((item, index) => {
+                  return (
+                    <option value={item.id}>{item.department_name}</option>
+                  );
+                })}
+            </select>
+          </div>
+          {arrCategoris &&
+            arrCategoris.length > 0 &&
+            arrCategoris.map((item, index) => {
               return (
                 <div
-                  className={topicId == item.id ? "topic active" : "topic"}
-                  onClick={() => this.getAllIdeasByTopic(item)}
+                  className={categoryId == item.id ? "topic active" : "topic"}
+                  onClick={() => this.getAllIdeasByCategory(item)}
                 >
-                  {item.topic_name}
+                  {item.category_name}
                 </div>
               );
             })}
@@ -364,7 +408,7 @@ class ViewIdeas extends Component {
                   isOpenModalIdea={isOpenModalIdea}
                   userId={userInfo.id}
                   toggleModal={this.toggleModaIdea}
-                  topic={topic}
+                  topic={category}
                   createNewIdea={this.createNewIdea}
                 />
               </div>
@@ -383,6 +427,7 @@ class ViewIdeas extends Component {
 
               let currentLike = this.getCurrentLikeByIdea(item.id);
               let currentDisLike = this.getCurrentDisLikeByIdea(item.id);
+              console.log("check current : ", currentLike);
 
               return (
                 <div className="ideas">
@@ -442,7 +487,7 @@ class ViewIdeas extends Component {
                     </button>
                     <ModalComment
                       isOpen={this.state.isOpenModal}
-                      topic={topic}
+                      topic={category}
                       ideaId={this.state.ideaId}
                       userId={userInfo.id}
                       allComment={this.state.newComments}
@@ -461,7 +506,7 @@ class ViewIdeas extends Component {
             previousLabel="Previous"
             nextLabel="Next"
             breakLabel="..."
-            pageCount={20}
+            pageCount={pageCount}
             marginPagesDisplayed={3}
             onPageChange={this.handleClickPage}
             containerClassName="pagination justify-content-center"
@@ -483,15 +528,12 @@ class ViewIdeas extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    topics: state.topic.topics,
     userInfo: state.user.userInfo,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    getAllTopicRedux: () => dispatch(actions.fetchAllTopicStart()),
-  };
+  return {};
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewIdeas);

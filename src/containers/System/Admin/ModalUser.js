@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { FormattedMessage } from "react-intl";
 import { connect } from "react-redux";
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap";
 import _ from "lodash";
@@ -14,6 +13,7 @@ class ModalUser extends Component {
       firstname: "",
       lastname: "",
       role: "admin",
+      departmentId: "",
     };
   }
 
@@ -27,6 +27,7 @@ class ModalUser extends Component {
         firstname: user.firstname,
         lastname: user.lastname,
         role: user.role,
+        departmentId: user.departmentId,
       });
     }
 
@@ -46,6 +47,7 @@ class ModalUser extends Component {
   };
 
   checkValideInput = () => {
+    let departmentId = this.state.departmentId;
     let isValide = true;
     let arrInput = ["email", "password", "firstname", "lastname", "role"];
     for (let i = 0; i < arrInput.length; i++) {
@@ -53,6 +55,16 @@ class ModalUser extends Component {
         isValide = false;
         alert("Missing parameter " + arrInput[i]);
         break;
+      }
+      if (
+        this.state[arrInput[i]] == "staff" ||
+        this.state[arrInput[i]] == "coordinator"
+      ) {
+        if (!departmentId) {
+          alert("Missing parameter department ");
+          isValide = false;
+          break;
+        }
       }
     }
     return isValide;
@@ -69,6 +81,7 @@ class ModalUser extends Component {
         firstname: "",
         lastname: "",
         role: "",
+        departmentId: "",
       });
       console.log("Done");
     }
@@ -76,6 +89,7 @@ class ModalUser extends Component {
 
   handleEditUser = () => {
     let check = this.checkValideInput();
+
     if (check) {
       this.props.DoEditUser(this.state);
       this.setState({
@@ -90,6 +104,7 @@ class ModalUser extends Component {
   };
 
   render() {
+    let arrDepartment = this.props.arrDepartment;
     console.log("Check state model: ", this.state);
     return (
       <div>
@@ -165,6 +180,25 @@ class ModalUser extends Component {
                   <option value={"staff"}>Staff</option>
                   <option value={"manage"}>QA-Manage</option>
                   <option value={"coordinator"}>QA-Coordinator</option>
+                </select>
+              </div>
+
+              <div className="input-container">
+                <label>Department</label>
+                <select
+                  value={this.state.departmentId}
+                  onChange={(e) => {
+                    this.handleOnChangeInput(e, "departmentId");
+                  }}
+                >
+                  <option value="">Choose department</option>
+                  {arrDepartment &&
+                    arrDepartment.length > 0 &&
+                    arrDepartment.map((item, index) => {
+                      return (
+                        <option value={item.id}>{item.department_name}</option>
+                      );
+                    })}
                 </select>
               </div>
             </div>
@@ -260,10 +294,28 @@ class ModalUser extends Component {
                   }}
                   value={this.state.role}
                 >
-                  <option>Admin</option>
-                  <option>Staff</option>
-                  <option>QA-Manage</option>
-                  <option>QA-Coordinator</option>
+                  <option value={"admin"}>Admin</option>
+                  <option value={"staff"}>Staff</option>
+                  <option value={"manage"}>QA-Manage</option>
+                  <option value={"coordinator"}>QA-Coordinator</option>
+                </select>
+              </div>
+              <div className="input-container">
+                <label>Department</label>
+                <select
+                  value={this.state.departmentId}
+                  onChange={(e) => {
+                    this.handleOnChangeInput(e, "departmentId");
+                  }}
+                >
+                  <option value="">Choose department</option>
+                  {arrDepartment &&
+                    arrDepartment.length > 0 &&
+                    arrDepartment.map((item, index) => {
+                      return (
+                        <option value={item.id}>{item.department_name}</option>
+                      );
+                    })}
                 </select>
               </div>
             </div>

@@ -5,10 +5,12 @@ import UserManage from "../containers/System/Admin/UserManage";
 import ProductManage from "../containers/System/ProductManage";
 import RegisterPackageGroupOrAcc from "../containers/System/RegisterPackageGroupOrAcc";
 import Header from "../containers/Header/Header";
-import ManageTopics from "../containers/System/Admin/ManageTopics";
+import ManageCategory from "../containers/System/QA/ManageCategory";
 import ViewIdeas from "../containers/System/ViewIdeas";
-import ViewStaff from "../containers/System/ViewStaff";
+// import ViewStaff from "../containers/System/ViewStaff";
+import ManageIdea from "../containers/System/Staff/ManageIdea";
 import ManageIdeaByStaff from "../containers/System/ManageIdeaByStaff";
+import ManageDepartment from "../containers/System/QA/ManageDepartment";
 
 class System extends Component {
   render() {
@@ -20,10 +22,17 @@ class System extends Component {
           <div className="system-list">
             <Switch>
               <Route path="/system/user-manage" component={UserManage} />
-              <Route path="/system/topics-manage" component={ManageTopics} />
+              <Route
+                path="/system/category-manage"
+                component={ManageCategory}
+              />
+              <Route
+                path="/system/department-manage"
+                component={ManageDepartment}
+              />
               <Route path="/system/product-manage" component={ProductManage} />
               <Route path="/system/view-ideas" component={ViewIdeas} />
-              <Route path="/system/view-staff" component={ViewStaff} />
+              <Route path="/system/manage-idea" component={ManageIdea} />
               <Route
                 path="/system/manage-idea-by-staff"
                 component={ManageIdeaByStaff}

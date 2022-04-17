@@ -1,0 +1,17 @@
+.category-container {
+    width: 80%;
+    margin:  0 auto;
+    .department-content{
+        display: flex;
+        .content-left{
+            width: 30%;
+            height: 200px;
+            border: 1px solid;
+
+            .list-department{
+                width: 50%;
+                margin: 0 auto;
+            }
+        }
+    }
+}

@@ -16,8 +16,8 @@ const deleteTopicService = (id) => {
   return axios.delete("/api/delete-topic", { data: { id: id } });
 };
 
-const getAllIdeasByTopic = (topicId) => {
-  return axios.get(`/api/get-all-ideas-by-topic?topicId=${topicId}`);
+const getAllIdeasByCategory = (categoryId) => {
+  return axios.get(`/api/get-all-ideas-by-category?categoryId=${categoryId}`);
 };
 
 const handleLikeorDisLike = (data) => {
@@ -89,7 +89,7 @@ export {
   createNewTopic,
   editTopicService,
   deleteTopicService,
-  getAllIdeasByTopic,
+  getAllIdeasByCategory,
   handleLikeorDisLike,
   getStatusIsLike,
   getStatusByUserIdAndTopic,

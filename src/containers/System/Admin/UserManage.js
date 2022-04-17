@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { FormattedMessage } from "react-intl";
 import { connect } from "react-redux";
 import { emitter } from "../../../utils/emitter";
-import FileDownload from "js-file-download";
 import "./Usermanage.scss";
 import {
   getAllUsers,
@@ -10,6 +9,7 @@ import {
   deleteUserService,
   editUserService,
 } from "../../../services/userService";
+import { getAllDepartment } from "../../../services/departmentService";
 import ModalUser from "./ModalUser";
 import _ from "lodash";
 import ReactPaginate from "react-paginate";
@@ -19,26 +19,37 @@ class UserManage extends Component {
     super(props);
     this.state = {
       arrUser: [],
+      arrDepartment: [],
       newUsers: [],
       isOpenModalUser: false,
       isOpenModalEditUser: false,
       editUser: {},
+      pageCount: "",
     };
   }
 
   async componentDidMount() {
     await this.getAllUserFromReact();
     this.getCurrentUserPage(1);
+    this.getAllDepartment();
   }
+
+  getAllDepartment = async () => {
+    let res = await getAllDepartment();
+    this.setState({
+      arrDepartment: res.data,
+    });
+  };
 
   getAllUserFromReact = async () => {
     let response = await getAllUsers("ALL");
     if (response && response.errCode === 0) {
+      let pageCount = Math.ceil(response.users.length / 5);
       this.setState({
+        pageCount: pageCount,
         arrUser: response.users,
       });
     }
-    console.log("get all user from nodejs :", response);
   };
 
   handleCreateNewUser = () => {
@@ -86,14 +97,18 @@ class UserManage extends Component {
 
   handleDeleteUser = async (id) => {
     try {
-      let response = await deleteUserService(id);
-      if (response && response.errCode !== 0) {
-        alert(response.message);
-      } else {
-        await this.getAllUserFromReact();
-        this.setState({
-          isOpenModalUser: false,
-        });
+      let check = window.confirm("You want to delete!");
+      if (check) {
+        let response = await deleteUserService(id);
+        if (response && response.errCode !== 0) {
+          alert(response.message);
+        } else {
+          await this.getAllUserFromReact();
+          this.getCurrentUserPage(1);
+          this.setState({
+            isOpenModalUser: false,
+          });
+        }
       }
     } catch (error) {
       console.log(error);
@@ -107,6 +122,7 @@ class UserManage extends Component {
         alert(response.message);
       } else {
         await this.getAllUserFromReact();
+        this.getCurrentUserPage(1);
         this.setState({
           isOpenModalEditUser: false,
         });
@@ -138,8 +154,7 @@ class UserManage extends Component {
   };
 
   render() {
-    let arrUser = this.state.newUsers;
-    let { files } = this.state;
+    let { pageCount, newUsers, arrDepartment } = this.state;
     console.log("chek state: ", this.state);
 
     return (
@@ -148,6 +163,7 @@ class UserManage extends Component {
           isOpenAdd={this.state.isOpenModalUser}
           toggleModalUser={this.toggleModalUser}
           createNewUser={this.createNewUser}
+          arrDepartment={arrDepartment}
         />
         {this.state.isOpenModalEditUser === true && (
           <ModalUser
@@ -155,6 +171,7 @@ class UserManage extends Component {
             toggleModalUser={this.toggleModaEditlUser}
             DoEditUser={this.DoEditUser}
             editUser={this.state.editUser}
+            arrDepartment={arrDepartment}
           />
         )}
 
@@ -179,8 +196,9 @@ class UserManage extends Component {
                 <th>Role</th>
                 <th>Actions</th>
               </tr>
-              {arrUser &&
-                arrUser.map((item, indext) => {
+              {newUsers &&
+                newUsers.length > 0 &&
+                newUsers.map((item, indext) => {
                   return (
                     <>
                       <tr>
@@ -197,7 +215,7 @@ class UserManage extends Component {
                           </button>
                           <button
                             className="btn-delete"
-                            onClick={() => this.handleDeleteUser()}
+                            onClick={() => this.handleDeleteUser(item.id)}
                           >
                             <i className="fas fa-trash-alt"></i>
                           </button>
@@ -212,7 +230,7 @@ class UserManage extends Component {
             previousLabel="Previous"
             nextLabel="Next"
             breakLabel="..."
-            pageCount={20}
+            pageCount={pageCount}
             marginPagesDisplayed={3}
             onPageChange={this.handleClickPage}
             containerClassName="pagination justify-content-center"

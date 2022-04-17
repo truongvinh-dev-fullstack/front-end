@@ -2,14 +2,13 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
 import UserManage from "../containers/System/Admin/UserManage";
-import ProductManage from "../containers/System/ProductManage";
-import RegisterPackageGroupOrAcc from "../containers/System/RegisterPackageGroupOrAcc";
+
 import Header from "../containers/Header/Header";
 import ManageCategory from "../containers/System/QA/ManageCategory";
 import ViewIdeas from "../containers/System/ViewIdeas";
 // import ViewStaff from "../containers/System/ViewStaff";
 import ManageIdea from "../containers/System/Staff/ManageIdea";
-import ManageIdeaByStaff from "../containers/System/ManageIdeaByStaff";
+
 import ManageDepartment from "../containers/System/QA/ManageDepartment";
 import DashboardAdmin from "../containers/System/Admin/DashboardAdmin";
 
@@ -70,7 +69,6 @@ class System extends Component {
                   }
                 }}
               />
-
               <Route
                 path="/system/manage-idea"
                 component={() => {
@@ -81,19 +79,6 @@ class System extends Component {
                   }
                 }}
               />
-              <Route
-                path="/system/manage-idea-by-staff"
-                component={ManageIdeaByStaff}
-              />
-              {/* <Route
-                path="/system/register-package-group-or-account"
-                component={RegisterPackageGroupOrAcc}
-              /> */}
-              {/* <Route
-                component={() => {
-                  return <Redirect to={systemMenuPath} />;
-                }}
-              /> */}
             </Switch>
           </div>
         </div>

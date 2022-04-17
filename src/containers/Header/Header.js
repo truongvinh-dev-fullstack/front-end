@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 
 import * as actions from "../../store/actions";
 import Navigator from "../../components/Navigator";
-import { adminMenu, QAMenu, StaffMenu } from "./menuApp";
+import { adminMenu, QAManage, StaffMenu, QACoordinator } from "./menuApp";
 import "./Header.scss";
 
 class Header extends Component {
@@ -29,9 +29,14 @@ class Header extends Component {
         menu: StaffMenu,
       });
     }
-    if (role == "manage" || role == "coordinator") {
+    if (role == "manage") {
       this.setState({
-        menu: QAMenu,
+        menu: QAManage,
+      });
+    }
+    if (role == "coordinator") {
+      this.setState({
+        menu: QACoordinator,
       });
     }
   };

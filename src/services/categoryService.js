@@ -20,7 +20,17 @@ const getAllCategory = () => {
   return axios.get("/api/get-all-category");
 };
 
+const downloadCategoryZip = (id) => {
+  return axios.get(`/api/download-zip?id=${id}`, { responseType: "blob" });
+};
+
+const downloadCategoryCsv = (id) => {
+  return axios.get(`/api/download-csv?id=${id}`, { responseType: "blob" });
+};
+
 export {
+  downloadCategoryCsv,
+  downloadCategoryZip,
   getAllCategory,
   getAllCategoryById,
   createNewCategory,

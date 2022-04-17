@@ -99,6 +99,7 @@ const getIdeaLikeMost = () => {
 const getIdeaNewPost = () => {
   return axios.get("/api/get-idea-new");
 };
+
 export {
   getIdeaNewPost,
   getIdeaLikeMost,

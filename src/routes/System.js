@@ -16,6 +16,7 @@ import DashboardAdmin from "../containers/System/Admin/DashboardAdmin";
 class System extends Component {
   render() {
     const { systemMenuPath, isLoggedIn, userInfo } = this.props;
+    let role = this.props.userInfo.role;
     console.log("check prop: ", this.props.userInfo.role == "admin");
     return (
       <React.Fragment>
@@ -31,23 +32,55 @@ class System extends Component {
               <Route
                 path="/system/user-manage"
                 component={() => {
-                  if (this.props.userInfo.role == "admin")
-                    return <UserManage />;
-                  if (userInfo.role == "staff")
-                    return <Redirect to={"/system/view-ideas"} />;
+                  if (role == "admin") return <UserManage />;
+                  else return <Redirect to={"/system/dashnoard-admin"} />;
                 }}
               />
               <Route
                 path="/system/category-manage"
-                component={ManageCategory}
+                component={() => {
+                  if (role == "admin") {
+                    return <ManageCategory />;
+                  }
+                  if (role == "manage") {
+                    return <ManageCategory />;
+                  }
+                  if (role == "staff") {
+                    return <Redirect to={"/system/dashnoard-admin"} />;
+                  }
+                  if (role == "coordinator") {
+                    return <Redirect to={"/system/dashnoard-admin"} />;
+                  }
+                }}
               />
               <Route
                 path="/system/department-manage"
-                component={ManageDepartment}
+                component={() => {
+                  if (role == "admin") {
+                    return <ManageDepartment />;
+                  }
+                  if (role == "manage") {
+                    return <ManageDepartment />;
+                  }
+                  if (role == "staff") {
+                    return <Redirect to={"/system/dashnoard-admin"} />;
+                  }
+                  if (role == "coordinator") {
+                    return <Redirect to={"/system/dashnoard-admin"} />;
+                  }
+                }}
               />
-              <Route path="/system/product-manage" component={ProductManage} />
-              <Route path="/system/view-ideas" component={ViewIdeas} />
-              <Route path="/system/manage-idea" component={ManageIdea} />
+
+              <Route
+                path="/system/manage-idea"
+                component={() => {
+                  if (role == "staff") {
+                    return <ManageIdea />;
+                  } else {
+                    return <Redirect to={"/system/dashnoard-admin"} />;
+                  }
+                }}
+              />
               <Route
                 path="/system/manage-idea-by-staff"
                 component={ManageIdeaByStaff}

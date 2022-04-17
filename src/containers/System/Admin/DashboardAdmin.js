@@ -102,16 +102,23 @@ class DashboardAdmin extends Component {
       IdeaNewPost,
       NewPoster,
     } = this.state;
-    console.log("check idea like: ", TopPoster.firstname);
+    let role = this.props.userInfo.role;
+
     return (
       <>
         <div className="home">
           <div className="homeContainer">
             <div className="widgets">
-              <Widget data={dataUser} />
-              <Widget data={dataDepartment} />
-              <Widget data={dataCategory} />
-              <Widget data={dataIdea} />
+              {role == "admin" && <Widget data={dataUser} />}
+
+              {role == "admin" && <Widget data={dataDepartment} />}
+              {role == "manage" && <Widget data={dataDepartment} />}
+
+              {role == "manage" && <Widget data={dataCategory} />}
+              {role == "admin" && <Widget data={dataCategory} />}
+
+              {role == "manage" && <Widget data={dataIdea} />}
+              {role == "admin" && <Widget data={dataIdea} />}
             </div>
           </div>
         </div>
@@ -148,7 +155,9 @@ class DashboardAdmin extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {};
+  return {
+    userInfo: state.user.userInfo,
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {

@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import { FormattedMessage } from "react-intl";
 import { connect } from "react-redux";
 import { emitter } from "../../../utils/emitter";
+import FileDownload from "js-file-download";
+import b64ToBlob from "b64-to-blob";
+import fileSaver from "file-saver";
 import moment from "moment";
 import "./ManageCategory.scss";
 
@@ -10,6 +13,8 @@ import {
   createNewCategory,
   editCategoryService,
   deleteCategoryService,
+  downloadCategoryZip,
+  downloadCategoryCsv,
 } from "../../../services/categoryService";
 import { getAllDepartment } from "../../../services/departmentService";
 import _ from "lodash";
@@ -173,6 +178,32 @@ class ManageCategory extends Component {
     this.getCurrentCategoryPage(currentPage);
   };
 
+  downloadCategory = async (id) => {
+    let res = await downloadCategoryZip(id);
+
+    if (res.size < 50) {
+      alert("Don't have data");
+    } else {
+      FileDownload(res, "filename.zip");
+    }
+  };
+
+  downloadCategoryByCsv = async (id) => {
+    // await downloadCategoryCsv(id).then((res) => {
+    //   FileDownload(res, "filename.csv");
+    // });
+    let res = await downloadCategoryCsv(id);
+
+    FileDownload(res, "filename.csv");
+    if (!_.isEmpty(res)) {
+      alert("Don't has data!");
+    }
+
+    console.log(_.isEmpty(res));
+  };
+
+  downloadCategoryCsv;
+
   render() {
     let arrTopics = this.state.newTopics;
     console.log("check state: ", this.state);
@@ -237,6 +268,7 @@ class ManageCategory extends Component {
                     <th>First closure date</th>
                     <th>Final closure date</th>
                     <th>Actions</th>
+                    <th>Download</th>
                   </tr>
                   {newCategories &&
                     newCategories.length > 0 &&
@@ -275,6 +307,22 @@ class ManageCategory extends Component {
                                 }
                               >
                                 <i className="fas fa-trash-alt"></i>
+                              </button>
+                            </td>
+                            <td className="text-center">
+                              <button
+                                onClick={() => {
+                                  this.downloadCategory(item.id);
+                                }}
+                              >
+                                Test download zip
+                              </button>
+                              <button
+                                onClick={() => {
+                                  this.downloadCategoryByCsv(item.id);
+                                }}
+                              >
+                                Test download csv
                               </button>
                             </td>
                           </tr>

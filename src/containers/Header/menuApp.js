@@ -6,17 +6,24 @@ export const adminMenu = [
       { name: "Manage Account", link: "/system/user-manage" },
       { name: "Manage Categories", link: "/system/category-manage" },
       { name: "Manage Department", link: "/system/department-manage" },
-      { name: "View all ideas", link: "/system/view-ideas" },
     ],
   },
 ];
 
-export const QAMenu = [
+export const QACoordinator = [
+  {
+    name: "Menu",
+    menus: [{ name: "Dashboard", link: "/system/dashnoard-admin" }],
+  },
+];
+
+export const QAManage = [
   {
     name: "Menu",
     menus: [
-      { name: "Manage Topics", link: "/system/topics-manage" },
-      { name: "View all ideas", link: "/system/view-ideas" },
+      { name: "Dashboard", link: "/system/dashnoard-admin" },
+      { name: "Manage Categories", link: "/system/category-manage" },
+      { name: "Manage Department", link: "/system/department-manage" },
     ],
   },
 ];
